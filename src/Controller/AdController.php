@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
-use App\Entity\Image;
 use App\Form\AdType;
 use App\Repository\AdRepository;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -16,9 +15,9 @@ class AdController extends AbstractController
     /**
      * @Route("/ads", name="ads_index")
      */
-    public function index(AdRepository $repo)
+    public function index(AdRepository $adRepository)
     {
-        $ads = $repo->findBy([], ['createdAt' => 'DESC']);
+        $ads = $adRepository->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('ad/index.html.twig', [
             'ads' => $ads,
@@ -40,6 +39,8 @@ class AdController extends AbstractController
                 $image->setAd($ad);
                 $manager->persist($image);
             }
+
+            $ad->setAuthor($this->getUser());
 
             $manager->persist($ad);
             $manager->flush();
@@ -84,7 +85,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/{id}/{slug}", name="ads_show")
+     * @Route("/ads/{id}/{slug?}", name="ads_show")
      */
     public function show($id, $slug, AdRepository $repo)
     {
