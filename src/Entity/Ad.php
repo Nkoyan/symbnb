@@ -283,4 +283,9 @@ class Ad
 
         return $this;
     }
+
+    public function isAuthor(?User $user): bool
+    {
+        return $user === $this->author;
+    }
 }

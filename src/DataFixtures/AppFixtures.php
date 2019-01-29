@@ -8,6 +8,7 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
@@ -23,11 +24,27 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
+        $this->createAdmin($manager);
         $users = $this->createUsers($manager, 10);
         $ads = $this->createAds($manager, $users, 30);
         $images = $this->createImages($manager, $ads, 100);
 
         $manager->flush();
+    }
+
+    private function createAdmin(ObjectManager $manager)
+    {
+        $admin = new User();
+        $admin->setFirstName('Yoann')
+            ->setLastName('Kergall')
+            ->setEmail('yoann.kergall@gmail.com')
+            ->setPassword($this->passwordEncoder->encodePassword($admin, '1111'))
+            ->setPicture('https://avatars.io/twitter/yoann')
+            ->setIntroduction($this->faker->sentence)
+            ->setDescription('<p>' . join('</p><p>', $this->faker->paragraphs(3)) . '</p>')
+            ->setRoles(['ROLE_ADMIN']);
+
+        $manager->persist($admin);
     }
 
     private function createUsers(ObjectManager $manager, int $amount)

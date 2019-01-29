@@ -6,6 +6,9 @@ use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
 use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,6 +29,7 @@ class AdController extends AbstractController
 
     /**
      * @Route("/ads/new", name="ads_create")
+     * @IsGranted("ROLE_USER")
      */
     public function create(Request $request, ObjectManager $manager)
     {
@@ -60,6 +64,9 @@ class AdController extends AbstractController
      */
     public function edit(Ad $ad, Request $request, ObjectManager $manager)
     {
+        if (!$ad->isAuthor($this->getUser())) {
+            throw $this->createAccessDeniedException("Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier");
+        }
 
         $form = $this->createForm(AdType::class, $ad);
         $form->handleRequest($request);
@@ -85,11 +92,31 @@ class AdController extends AbstractController
     }
 
     /**
+     * @Route("ads/{id}/delete", name="ads_delete")
+     */
+    public function delete(Ad $ad, Request $request, ObjectManager $manager)
+    {
+        if (!$ad->isAuthor($this->getUser()) || !$this->isCsrfTokenValid('delete', $request->get('token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $manager->remove($ad);
+        $manager->flush();
+
+        $this->addFlash('success', "L'annonce <strong>{$ad->getTitle()}</strong> a bien été supprimée !");
+        return $this->redirectToRoute('user_my_account');
+    }
+
+    /**
      * @Route("/ads/{id}/{slug?}", name="ads_show")
      */
     public function show($id, $slug, AdRepository $repo)
     {
         $ad = $repo->findOneBy(['id' => $id]);
+
+        if (!$ad) {
+            throw $this->createNotFoundException();
+        }
 
         if ($slug != $ad->getSlug()) {
             return $this->redirectToRoute('ads_show', ['id' => $id, 'slug' => $ad->getSlug()]);
@@ -99,5 +126,4 @@ class AdController extends AbstractController
             'ad' => $ad
         ]);
     }
-
 }

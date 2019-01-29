@@ -9,6 +9,7 @@ use App\Form\PasswordUpdateType;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/account/profile", name="user_edit")
+     * @IsGranted("ROLE_USER")
      */
     public function edit(Request $request, ObjectManager $manager)
     {
@@ -72,6 +74,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/account/password-update", name="user_update_password")
+     * @IsGranted("ROLE_USER")
      */
     public function updatePassword(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -108,6 +111,10 @@ class UserController extends AbstractController
         /** @var User $user */
         $user = $userRepository->findOneBy(['id' => $id]);
 
+        if (!$user) {
+            throw $this->createNotFoundException("Cet utilisateur n'existe pas");
+        }
+
         if ($slug != $user->getSlug()) {
             return $this->redirectToRoute('user_show', ['id' => $id, 'slug' => $user->getSlug()]);
         }
@@ -119,6 +126,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/account", name="user_my_account")
+     * @IsGranted("ROLE_USER")
      */
     public function myAccount()
     {
