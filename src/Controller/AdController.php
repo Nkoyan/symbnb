@@ -92,7 +92,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("ads/{id}/delete", name="ads_delete")
+     * @Route("/ads/{id}/{slug}/delete", name="ads_delete")
      */
     public function delete(Ad $ad, Request $request, ObjectManager $manager)
     {
@@ -108,7 +108,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/{id}/{slug?}", name="ads_show")
+     * @Route("/ads/{id<\d+>}/{slug?}", name="ads_show")
      */
     public function show($id, $slug, AdRepository $repo)
     {

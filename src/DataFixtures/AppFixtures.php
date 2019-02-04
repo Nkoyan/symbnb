@@ -3,8 +3,10 @@
 namespace App\DataFixtures;
 
 use App\Entity\Ad;
+use App\Entity\Booking;
 use App\Entity\Image;
 use App\Entity\User;
+use DateInterval;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
@@ -28,6 +30,7 @@ class AppFixtures extends Fixture
         $users = $this->createUsers($manager, 10);
         $ads = $this->createAds($manager, $users, 30);
         $images = $this->createImages($manager, $ads, 100);
+        $bookings = $this->createBookings($manager, $ads, $users, 100);
 
         $manager->flush();
     }
@@ -116,5 +119,35 @@ class AppFixtures extends Fixture
         }
 
         return $images;
+    }
+
+    private function createBookings(ObjectManager $manager, array $ads, array $users, int $amount)
+    {
+        $bookings = [];
+
+        for ($i = 0; $i < $amount; $i++) {
+            $ad = $ads[mt_rand(0, count($ads) - 1)];
+            $booker = $users[mt_rand(0, count($users) - 1)];
+            $booking = new Booking();
+
+            $createdAt = $this->faker->dateTimeBetween('-6 months');
+            $startDate = (clone $createdAt)->modify('+' . mt_rand(3, 100) . ' days');
+            $duration = mt_rand(3, 10);
+            $endDate = (clone $startDate)->modify('+' . $duration . ' days');
+            $totalPrice = $ad->getPrice() * $duration;
+
+            $booking->setAd($ad)
+                ->setBooker($booker)
+                ->setStartDate($startDate)
+                ->setEndDate($endDate)
+                ->setCreatedAt($createdAt)
+                ->setAmount($totalPrice)
+                ->setComment($this->faker->paragraph());
+
+            $bookings[] = $booking;
+            $manager->persist($booking);
+        }
+
+        return $bookings;
     }
 }

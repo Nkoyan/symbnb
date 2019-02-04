@@ -43,7 +43,7 @@ class Ad
     private $slug;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=19, scale=4)
      */
     private $price;
 
@@ -96,9 +96,15 @@ class Ad
      */
     private $author;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Booking", mappedBy="ad")
+     */
+    private $bookings;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
+        $this->bookings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -287,5 +293,62 @@ class Ad
     public function isAuthor(?User $user): bool
     {
         return $user === $this->author;
+    }
+
+    /**
+     * @return Collection|Booking[]
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): self
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings[] = $booking;
+            $booking->setAd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): self
+    {
+        if ($this->bookings->contains($booking)) {
+            $this->bookings->removeElement($booking);
+            // set the owning side to null (unless already changed)
+            if ($booking->getAd() === $this) {
+                $booking->setAd(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime[]
+     * @throws \Exception
+     */
+    public function getNotAvailableDays()
+    {
+        $notAvailableDays = [];
+
+        /** @var Booking $booking */
+        foreach ($this->bookings as $booking) {
+
+            $resultat = [];
+
+            $start = $booking->getStartDate()->getTimestamp();
+            $end = $booking->getEndDate()->getTimestamp();
+
+            for ($i = $start; $i < $end; $i += 24 * 60 * 60) {
+                $resultat[] = new \DateTime("@$i");
+            }
+
+            $notAvailableDays = array_merge($notAvailableDays, $resultat);
+        }
+
+        return $notAvailableDays;
     }
 }
