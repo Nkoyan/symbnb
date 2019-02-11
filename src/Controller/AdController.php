@@ -7,8 +7,6 @@ use App\Form\AdType;
 use App\Repository\AdRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -55,7 +53,7 @@ class AdController extends AbstractController
         }
 
         return $this->render('ad/new.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -65,7 +63,7 @@ class AdController extends AbstractController
     public function edit(Ad $ad, Request $request, ObjectManager $manager)
     {
         if (!$ad->isAuthor($this->getUser())) {
-            throw $this->createAccessDeniedException("Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier");
+            throw $this->createAccessDeniedException('Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier');
         }
 
         $form = $this->createForm(AdType::class, $ad);
@@ -87,7 +85,7 @@ class AdController extends AbstractController
 
         return $this->render('ad/edit.html.twig', [
             'form' => $form->createView(),
-            'ad' => $ad
+            'ad' => $ad,
         ]);
     }
 
@@ -104,6 +102,7 @@ class AdController extends AbstractController
         $manager->flush();
 
         $this->addFlash('success', "L'annonce <strong>{$ad->getTitle()}</strong> a bien été supprimée !");
+
         return $this->redirectToRoute('user_my_account');
     }
 
@@ -118,12 +117,12 @@ class AdController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        if ($slug != $ad->getSlug()) {
+        if ($slug !== $ad->getSlug()) {
             return $this->redirectToRoute('ads_show', ['id' => $id, 'slug' => $ad->getSlug()]);
         }
 
         return $this->render('ad/show.html.twig', [
-            'ad' => $ad
+            'ad' => $ad,
         ]);
     }
 }

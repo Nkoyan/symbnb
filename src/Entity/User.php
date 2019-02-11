@@ -5,7 +5,6 @@ namespace App\Entity;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Encoder\Argon2iPasswordEncoder;
@@ -61,7 +60,6 @@ class User implements UserInterface
      */
     public $confirmPassword;
 
-
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Vous devez renseigner votre prénom")
@@ -107,10 +105,21 @@ class User implements UserInterface
      */
     private $bookings;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
+     */
+    private $comments;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
     public function __construct()
     {
         $this->ads = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,7 +146,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -164,7 +173,7 @@ class User implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string)$this->password;
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
@@ -265,7 +274,7 @@ class User implements UserInterface
 
     public function getFullName(): string
     {
-        return $this->firstName . ' ' . $this->lastName;
+        return $this->firstName.' '.$this->lastName;
     }
 
     /**
@@ -305,8 +314,12 @@ class User implements UserInterface
      */
     public function prePersist()
     {
+        if (!$this->createdAt) {
+            $this->createdAt = new \DateTime();
+        }
+
         if (!$this->slug) {
-            $this->slug = (new Slugify())->slugify($this->firstName . ' ' . $this->lastName);
+            $this->slug = (new Slugify())->slugify($this->firstName.' '.$this->lastName);
         }
     }
 
@@ -337,6 +350,49 @@ class User implements UserInterface
                 $booking->setBooker(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

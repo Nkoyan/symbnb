@@ -19,7 +19,8 @@ class AdType extends ApplicationType
         $builder
             ->add('title', TextType::class, $this->getConfiguration('Titre', 'Tapez un super titre pour votre annonce !'))
             ->add('slug', TextType::class, $this->getConfiguration('Adresse web', 'Tapez l\'adresse web (automatique)', [
-                'required' => false
+                'required' => false,
+                'empty_data' => '',
             ]))
             ->add('coverImage', UrlType::class, $this->getConfiguration('URL de l\'image', 'Donnez l\'adresse d\'une image qui donne vraiment envie'))
             ->add('introduction', TextType::class, $this->getConfiguration('Introduction', 'Donnez une description globale de l\'annonce'))
@@ -29,7 +30,7 @@ class AdType extends ApplicationType
             ->add('images', CollectionType::class, [
                 'entry_type' => ImageType::class,
                 'allow_add' => true,
-                'allow_delete' => true
+                'allow_delete' => true,
             ]);
     }
 

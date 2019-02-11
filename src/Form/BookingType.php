@@ -24,18 +24,26 @@ class BookingType extends ApplicationType
             ->add(
                 'startDate',
                 TextType::class,
-                $this->getConfiguration("Date d'arrivée", "Date à laquelle vous comptez arriver")
+                $this->getConfiguration("Date d'arrivée", 'Date à laquelle vous comptez arriver', [
+                    'attr' => [
+                        'autocomplete' => 'off',
+                    ],
+                ])
             )
             ->add(
                 'endDate',
                 TextType::class,
-                $this->getConfiguration("Date de départ", "La date à laquelle vous quittez les lieux")
+                $this->getConfiguration('Date de départ', 'La date à laquelle vous quittez les lieux', [
+                    'attr' => [
+                        'autocomplete' => 'off',
+                    ],
+                ])
             )
             ->add(
                 'comment',
                 TextareaType::class,
                 $this->getConfiguration(false, "Si vous avez un commentaire, n'hésitez pas à en faire part !", [
-                    'required' => false
+                    'required' => false,
                 ])
             )
         ;
@@ -48,6 +56,7 @@ class BookingType extends ApplicationType
     {
         $resolver->setDefaults([
             'data_class' => Booking::class,
+            'validation_groups' => ['Default', 'front'],
         ]);
     }
 }

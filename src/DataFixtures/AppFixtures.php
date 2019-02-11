@@ -4,13 +4,12 @@ namespace App\DataFixtures;
 
 use App\Entity\Ad;
 use App\Entity\Booking;
+use App\Entity\Comment;
 use App\Entity\Image;
 use App\Entity\User;
-use DateInterval;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
@@ -26,11 +25,11 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $this->createAdmin($manager);
         $users = $this->createUsers($manager, 10);
         $ads = $this->createAds($manager, $users, 30);
         $images = $this->createImages($manager, $ads, 100);
         $bookings = $this->createBookings($manager, $ads, $users, 100);
+        $comments = $this->createComments($manager, $ads, $users, 200);
 
         $manager->flush();
     }
@@ -44,30 +43,34 @@ class AppFixtures extends Fixture
             ->setPassword($this->passwordEncoder->encodePassword($admin, '1111'))
             ->setPicture('https://avatars.io/twitter/yoann')
             ->setIntroduction($this->faker->sentence)
-            ->setDescription('<p>' . join('</p><p>', $this->faker->paragraphs(3)) . '</p>')
+            ->setDescription('<p>'.implode('</p><p>', $this->faker->paragraphs(3)).'</p>')
             ->setRoles(['ROLE_ADMIN']);
 
         $manager->persist($admin);
+
+        return $admin;
     }
 
     private function createUsers(ObjectManager $manager, int $amount)
     {
         $users = [];
+        $users[] = $this->createAdmin($manager);
         $genres = ['male', 'female'];
 
-        for ($i = 0; $i < $amount; $i++) {
+        for ($i = 0; $i < $amount; ++$i) {
             $user = new User();
             $genre = $this->faker->randomElement($genres);
 
             $picture = 'https://randomuser.me/api/portraits/';
-            $picture .= ($genre == 'male' ? 'men/' : 'women/') . mt_rand(0, 99) . '.jpg';
+            $picture .= ('male' === $genre ? 'men/' : 'women/').mt_rand(0, 99).'.jpg';
 
             $user->setFirstName($this->faker->firstName($genre))
                 ->setLastName($this->faker->lastName)
                 ->setEmail($this->faker->email)
                 ->setIntroduction($this->faker->sentence)
-                ->setDescription('<p>' . join('</p><p>', $this->faker->paragraphs(3)) . '</p>')
-                ->setPassword($this->passwordEncoder->encodePassword($user, '1234'))
+                ->setDescription('<p>'.implode('</p><p>', $this->faker->paragraphs(3)).'</p>')
+                ->setPassword($this->passwordEncoder->encodePassword($user, '1111'))
+                ->setCreatedAt($this->faker->dateTimeBetween('-2 years'))
                 ->setPicture($picture);
 
             $manager->persist($user);
@@ -81,13 +84,14 @@ class AppFixtures extends Fixture
     {
         $ads = [];
 
-        for ($i = 0; $i < $amount; $i++) {
+        for ($i = 0; $i < $amount; ++$i) {
             $ad = new Ad();
 
             $title = $this->faker->sentence();
             $coverImage = $this->faker->imageUrl(1000, 350);
             $introduction = $this->faker->paragraph(2);
-            $content = '<p>' . join('</p><p>', $this->faker->paragraphs(5)) . '</p>';
+            $content = '<p>'.implode('</p><p>', $this->faker->paragraphs(5)).'</p>';
+            $createdAt = $this->faker->dateTimeBetween('-1 year');
 
             $ad->setTitle($title)
                 ->setCoverImage($coverImage)
@@ -95,7 +99,10 @@ class AppFixtures extends Fixture
                 ->setContent($content)
                 ->setPrice(mt_rand(40, 200))
                 ->setRooms(mt_rand(1, 5))
-                ->setAuthor($users[mt_rand(0, count($users) - 1)]);
+                ->setAuthor($users[mt_rand(0, \count($users) - 1)])
+                ->setCreatedAt($createdAt)
+                ->setUpdatedAt($createdAt)
+            ;
 
             $manager->persist($ad);
             $ads[] = $ad;
@@ -108,11 +115,11 @@ class AppFixtures extends Fixture
     {
         $images = [];
 
-        for ($i = 0; $i < $amount; $i++) {
+        for ($i = 0; $i < $amount; ++$i) {
             $image = new Image();
             $image->setUrl($this->faker->imageUrl())
                 ->setCaption($this->faker->sentence())
-                ->setAd($ads[mt_rand(0, count($ads) - 1)]);
+                ->setAd($ads[mt_rand(0, \count($ads) - 1)]);
 
             $manager->persist($image);
             $images[] = $image;
@@ -125,15 +132,15 @@ class AppFixtures extends Fixture
     {
         $bookings = [];
 
-        for ($i = 0; $i < $amount; $i++) {
-            $ad = $ads[mt_rand(0, count($ads) - 1)];
-            $booker = $users[mt_rand(0, count($users) - 1)];
+        for ($i = 0; $i < $amount; ++$i) {
+            $ad = $ads[mt_rand(0, \count($ads) - 1)];
+            $booker = $users[mt_rand(0, \count($users) - 1)];
             $booking = new Booking();
 
-            $createdAt = $this->faker->dateTimeBetween('-6 months');
-            $startDate = (clone $createdAt)->modify('+' . mt_rand(3, 100) . ' days');
+            $createdAt = $this->faker->dateTimeBetween($ad->getCreatedAt());
+            $startDate = (clone $createdAt)->modify('+'.mt_rand(3, 100).' days');
             $duration = mt_rand(3, 10);
-            $endDate = (clone $startDate)->modify('+' . $duration . ' days');
+            $endDate = (clone $startDate)->modify('+'.$duration.' days');
             $totalPrice = $ad->getPrice() * $duration;
 
             $booking->setAd($ad)
@@ -149,5 +156,28 @@ class AppFixtures extends Fixture
         }
 
         return $bookings;
+    }
+
+    private function createComments(ObjectManager $manager, array $ads, array $users, int $amount)
+    {
+        $comments = [];
+
+        for ($i = 0; $i < $amount; ++$i) {
+            $comment = new Comment();
+            /** @var Ad $ad */
+            $ad = $ads[mt_rand(0, \count($ads) - 1)];
+            $author = $users[mt_rand(0, \count($users) - 1)];
+
+            $comment->setContent($this->faker->paragraph)
+                ->setRating(mt_rand(1, 5))
+                ->setAuthor($author)
+                ->setAd($ad)
+                ->setCreatedAt($this->faker->dateTimeBetween($ad->getCreatedAt()));
+
+            $comments[] = $comment;
+            $manager->persist($comment);
+        }
+
+        return $comments;
     }
 }

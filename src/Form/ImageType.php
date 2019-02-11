@@ -16,13 +16,13 @@ class ImageType extends AbstractType
         $builder
             ->add('url', UrlType::class, [
                 'attr' => [
-                    'placeholder' => 'URL de l\'image'
-                ]
+                    'placeholder' => 'URL de l\'image',
+                ],
             ])
-            ->add('caption', TextType::class,  [
+            ->add('caption', TextType::class, [
                 'attr' => [
-                    'placeholder' => 'Titre de l\'image'
-                ]
+                    'placeholder' => 'Titre de l\'image',
+                ],
             ])
         ;
     }

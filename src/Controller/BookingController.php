@@ -4,12 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Entity\Booking;
+use App\Entity\Comment;
 use App\Form\BookingType;
+use App\Form\CommentType;
 use App\Repository\BookingRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -35,22 +36,20 @@ class BookingController extends AbstractController
 
             // Si les dates ne sont pas disponibles, message d'erreur
             if (!$booking->isBookableDates()) {
-                $this->addFlash('warning', "Les dates que vous avez choisi ne peuvent être réservées : elles sont déja prises.");
+                $this->addFlash('warning', 'Les dates que vous avez choisi ne peuvent être réservées : elles sont déja prises.');
             } else {
-
                 // Sinon enregistrement et redirection
                 $manager->persist($booking);
                 $manager->flush();
 
-
                 $authorUrl = $this->generateUrl('user_show', [
                     'id' => $ad->getAuthor()->getId(),
-                    'slug' => $ad->getAuthor()->getSlug()
+                    'slug' => $ad->getAuthor()->getSlug(),
                 ]);
 
                 $adUrl = $this->generateUrl('ads_show', [
                     'id' => $ad->getId(),
-                    'slug' => $ad->getSlug()
+                    'slug' => $ad->getSlug(),
                 ]);
 
                 $this->addFlash('success', "Votre réservation auprès de
@@ -60,25 +59,53 @@ class BookingController extends AbstractController
                 a bien été prise en compte !");
 
                 return $this->redirectToRoute('booking_show', [
-                    'id' => $booking->getId()
+                    'id' => $booking->getId(),
                 ]);
-
             }
         }
 
         return $this->render('booking/new.html.twig', [
             'ad' => $ad,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/booking/{id}", name="booking_show")
      */
-    public function show(Booking $booking)
+    public function show(Booking $booking, Request $request, ObjectManager $manager)
     {
+        $userComment = $booking->getAd()->getCommentFromAuthor($this->getUser());
+
+        if ($userComment) {
+            return $this->render('booking/show.html.twig', [
+                'booking' => $booking,
+                'userComment' => $userComment,
+            ]);
+        }
+
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setAuthor($this->getUser());
+            $comment->setAd($booking->getAd());
+
+            $manager->persist($comment);
+            $manager->flush();
+
+            $this->addFlash('success', 'Votre commentaire a bien été pris en compte !');
+
+            return $this->render('booking/show.html.twig', [
+                'booking' => $booking,
+                'userComment' => $comment,
+            ]);
+        }
+
         return $this->render('booking/show.html.twig', [
-            'booking' => $booking
+            'booking' => $booking,
+            'form' => $form->createView(),
         ]);
     }
 }

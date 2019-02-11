@@ -33,7 +33,11 @@ class Booking
     /**
      * @ORM\Column(type="date")
      * @Assert\Date(message="Vous devez entrer une date valide")
-     * @Assert\GreaterThan("today")
+     * @Assert\GreaterThan(
+     *     "today",
+     *     message="La date d'arrivée doit être ultérieure à la date d'aujourd'hui !",
+     *     groups={"front"}
+     *     )
      */
     private $startDate;
 
@@ -150,10 +154,13 @@ class Booking
 
     /**
      * @ORM\PrePersist()
+     * @ORM\PreUpdate()
      */
     public function prePersist()
     {
-        $this->setCreatedAt(new \DateTime());
+        if (!$this->createdAt) {
+            $this->setCreatedAt(new \DateTime());
+        }
         $this->setAmount($this->getDuration() * $this->getAd()->getPrice());
     }
 
@@ -168,7 +175,7 @@ class Booking
         $bookingDays = $this->getDays();
 
         $formatDay = function ($day) {
-            /** @var \DateTime $day */
+            /* @var \DateTime $day */
             return $day->format('Y-m-d');
         };
 
@@ -176,9 +183,9 @@ class Booking
         $notAvailable = array_map($formatDay, $notAvailableDays);
 
         foreach ($days as $day) {
-            if (array_search($day, $notAvailable) !== false) {
+            if (false !== array_search($day, $notAvailable, true)) {
                 return false;
-            };
+            }
         }
 
         return true;

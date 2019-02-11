@@ -10,7 +10,6 @@ use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,7 +35,7 @@ class UserController extends AbstractController
 
             $this->addFlash(
                 'success',
-                "Votre compte a bien été créé ! Vous pouvez maintenant vous connecter !"
+                'Votre compte a bien été créé ! Vous pouvez maintenant vous connecter !'
             );
 
             return $this->redirectToRoute('security_login');
@@ -68,7 +67,7 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/edit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -92,14 +91,14 @@ class UserController extends AbstractController
 
             $this->addFlash(
                 'success',
-                "Votre mot de passe à bien été modifié !"
+                'Votre mot de passe à bien été modifié !'
             );
 
             return $this->redirectToRoute('homepage');
         }
 
         return $this->render('user/password.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 
@@ -115,12 +114,12 @@ class UserController extends AbstractController
             throw $this->createNotFoundException("Cet utilisateur n'existe pas");
         }
 
-        if ($slug != $user->getSlug()) {
+        if ($slug !== $user->getSlug()) {
             return $this->redirectToRoute('user_show', ['id' => $id, 'slug' => $user->getSlug()]);
         }
 
         return $this->render('user/show.html.twig', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -135,12 +134,13 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/show.html.twig', [
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
         ]);
     }
 
     /**
      * @Route("/account/bookings", name="user_bookings")
+     * @IsGranted("ROLE_USER")
      */
     public function bookings()
     {

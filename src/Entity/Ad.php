@@ -101,10 +101,16 @@ class Ad
      */
     private $bookings;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="ad", orphanRemoval=true)
+     */
+    private $comments;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
         $this->bookings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -327,8 +333,9 @@ class Ad
     }
 
     /**
-     * @return \DateTime[]
      * @throws \Exception
+     *
+     * @return \DateTime[]
      */
     public function getNotAvailableDays()
     {
@@ -336,7 +343,6 @@ class Ad
 
         /** @var Booking $booking */
         foreach ($this->bookings as $booking) {
-
             $resultat = [];
 
             $start = $booking->getStartDate()->getTimestamp();
@@ -350,5 +356,63 @@ class Ad
         }
 
         return $notAvailableDays;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAd() === $this) {
+                $comment->setAd(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAvgRating()
+    {
+        $commentsAmount = $this->getComments()->count();
+
+        if (0 === $commentsAmount) {
+            return 0;
+        }
+
+        $sum = 0;
+        foreach ($this->getComments() as $comment) {
+            $sum += $comment->getRating();
+        }
+
+        return round($sum / $commentsAmount);
+    }
+
+    public function getCommentFromAuthor(User $author): ?Comment
+    {
+        foreach ($this->getComments() as $comment) {
+            if ($comment->getAuthor() === $author) {
+                return $comment;
+            }
+        }
+
+        return null;
     }
 }

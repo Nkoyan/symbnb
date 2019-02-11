@@ -9,7 +9,7 @@
             <h1>{{ ad.title }}</h1>
             <p>{{ ad.introduction }}</p>
             <p class="h2">
-                <strong>{{ ad.rooms }} chambres</strong> pour <strong>{{ ad.price }}€</strong> par nuit
+                <strong>{{ ad.rooms }} chambres</strong> pour <strong>{{ ad.price | number_format(2, ',', ' ') }} &euro;</strong> par nuit
             </p>
             {% if app.user is same as(ad.author) %}
                 <a href="{{ path('ads_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
@@ -54,6 +54,40 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
+
+                <hr>
+
+                {% if ad.comments | length > 0 %}
+                    <h2 class="mb-3">Commentaires de nos voyageurs</h2>
+                    <div class="alert alert-info">
+                        <h4 class="alert-heading text-center">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    Note globale donnée par nos voyageurs
+                                </div>
+                                <div class="col">
+                                    {{ include('partials/_rating.html.twig', {'rating': ad.avgRating}) }}<br>
+                                    <small>(calculée sur {{ ad.comments | length }} avis)</small>
+                                </div>
+                            </div>
+                        </h4>
+                    </div>
+                    {% for comment in ad.comments %}
+                        {# @var comment \App\Entity\Comment #}
+                        <div class="bg-light rounded mb-3 px-3 py-3">
+                            <strong>{{ comment.author.firstName }}</strong> a dit :
+                            <blockquote>
+                                {{ comment.content }}
+                            </blockquote>
+                            <strong>Note donnée : </strong>
+
+                            {{ include('partials/_rating.html.twig', {'rating': comment.rating}) }}
+
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h2>Cette annonce n'a pas encore reçu de commentaire ...</h2>
+                {% endif %}
 
             </div>
             <div class="col">

@@ -3,8 +3,12 @@
 <div class="col-md-4">
     <div class="card bg-light mb-3">
         <div class="card-header text-center">
-            {{ ad.rooms }} chambres, <strong>{{ ad.price }}€ / nuit</strong> <br>
-            <small>Pas encore noté</small>
+            {{ ad.rooms }} chambres, <strong>{{ ad.price | number_format(2, ',', ' ') }} &euro; / nuit</strong> <br>
+            {% if ad.comments | length > 0 %}
+                {{ include('partials/_rating.html.twig', {'rating': ad.avgRating}) }}
+            {% else %}
+                <small>Pas encore noté</small>
+            {% endif %}
         </div>
 
         <a href="{{ url }}">
@@ -20,7 +24,7 @@
             <p class="class">
                 {{ ad.introduction }}
             </p>
-            <a href="{{ url }}" class="btn btn-secondary">En savoir plus !</a>
+            <a href="{{ url }}" class="btn btn-primary float-right">En savoir plus !</a>
             {% if ad.isAuthor(app.user) %}
                 <a href="{{ path('ads_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
             {% endif %}
