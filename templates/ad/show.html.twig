@@ -12,8 +12,8 @@
                 <strong>{{ ad.rooms }} chambres</strong> pour <strong>{{ ad.price | number_format(2, ',', ' ') }} &euro;</strong> par nuit
             </p>
             {% if app.user is same as(ad.author) %}
-                <a href="{{ path('ads_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
-                <a href="{{ path('ads_delete', {'id': ad.id, 'slug': ad.slug, 'token': csrf_token('delete') }) }}" class="btn btn-danger"
+                <a href="{{ path('ad_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
+                <a href="{{ path('ad_delete', {'id': ad.id, 'slug': ad.slug, 'token': csrf_token('delete') }) }}" class="btn btn-danger"
                 onclick="return confirm(`Êtes-vous sûr de vouloir supprimer l'annonce {{ ad.title }} ?`)">Supprimer l'annonce</a>
             {% else %}
                 <a href="{{ path('booking_new', {'id': ad.id, 'slug': ad.slug}) }}"

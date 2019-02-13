@@ -1,4 +1,4 @@
-{% set url = path('ads_show', {'id': ad.id, 'slug': ad.slug}) %}
+{% set url = path('ad_show', {'id': ad.id, 'slug': ad.slug}) %}
 
 <div class="col-md-4">
     <div class="card bg-light mb-3">
@@ -26,7 +26,7 @@
             </p>
             <a href="{{ url }}" class="btn btn-primary float-right">En savoir plus !</a>
             {% if ad.isAuthor(app.user) %}
-                <a href="{{ path('ads_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
+                <a href="{{ path('ad_edit', {'id': ad.id, 'slug': ad.slug}) }}" class="btn btn-secondary">Modifier l'annonce</a>
             {% endif %}
         </div>
     </div>

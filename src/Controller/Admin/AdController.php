@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
+use App\Service\Pagination;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,17 +14,23 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdController extends AbstractController
 {
     /**
-     * @Route("/admin/ads", name="admin_ads_index")
+     * @Route("/admin/ads", name="admin_ad_index")
      */
-    public function index(AdRepository $adRepository)
+    public function index(Request $request, AdRepository $adRepository, Pagination $pagination)
     {
+        $pagination = $pagination
+            ->setEntityClass(Ad::class)
+            ->setCurrentPage($request->query->get('page', 1))
+            ->paginate();
+
         return $this->render('admin/ad/index.html.twig', [
-            'ads' => $adRepository->findBy([], ['createdAt' => 'DESC']),
+            'ads' => $pagination->getData(),
+            'pagination' => $pagination,
         ]);
     }
 
     /**
-     * @Route("/admin/ads/{id}/edit", name="admin_ads_edit")
+     * @Route("/admin/ads/{id}/edit", name="admin_ad_edit")
      */
     public function edit(Ad $ad, Request $request)
     {
@@ -47,7 +54,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/admin/ads/{id}/delete", name="admin_ads_delete")
+     * @Route("/admin/ads/{id}/delete", name="admin_ad_delete")
      */
     public function delete(Ad $ad, ObjectManager $manager)
     {
@@ -67,6 +74,6 @@ class AdController extends AbstractController
             );
         }
 
-        return $this->redirectToRoute('admin_ads_index');
+        return $this->redirectToRoute('admin_ad_index');
     }
 }

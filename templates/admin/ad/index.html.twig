@@ -22,7 +22,7 @@
             {% for ad in ads %}
                 <tr>
                     <td>
-                        <a target="_blank" href="{{ path('ads_show', {'id': ad.id, 'slug': ad.slug}) }}">{{ ad.id }}</a>
+                        <a target="_blank" href="{{ path('ad_show', {'id': ad.id, 'slug': ad.slug}) }}">{{ ad.id }}</a>
                     </td>
                     <td>
                         {{ ad.title }}
@@ -39,10 +39,10 @@
                         <span class="badge badge-primary rounded">{{ ad.avgRating }}</span>
                     </td>
                     <td>
-                        <a href="{{ path('admin_ads_edit', {'id': ad.id}) }}" class="btn btn-primary">
+                        <a href="{{ path('admin_ad_edit', {'id': ad.id}) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a href="{{ path('admin_ads_delete', {'id': ad.id}) }}" class="btn btn-danger">
+                        <a href="{{ path('admin_ad_delete', {'id': ad.id}) }}" class="btn btn-danger">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>
@@ -50,5 +50,8 @@
             {% endfor %}
             </tbody>
         </table>
+
+        {{ pagination.display() }}
+
     </div>
 {% endblock %}

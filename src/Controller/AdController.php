@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdController extends AbstractController
 {
     /**
-     * @Route("/ads", name="ads_index")
+     * @Route("/ads", name="ad_index")
      */
     public function index(AdRepository $adRepository)
     {
@@ -26,7 +26,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/new", name="ads_create")
+     * @Route("/ads/new", name="ad_create")
      * @IsGranted("ROLE_USER")
      */
     public function create(Request $request, ObjectManager $manager)
@@ -58,7 +58,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/{id}/{slug}/edit", name="ads_edit")
+     * @Route("/ads/{id}/{slug}/edit", name="ad_edit")
      */
     public function edit(Ad $ad, Request $request, ObjectManager $manager)
     {
@@ -90,7 +90,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/{id}/{slug}/delete", name="ads_delete")
+     * @Route("/ads/{id}/{slug}/delete", name="ad_delete")
      */
     public function delete(Ad $ad, Request $request, ObjectManager $manager)
     {
@@ -107,7 +107,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/{id<\d+>}/{slug?}", name="ads_show")
+     * @Route("/ads/{id<\d+>}/{slug?}", name="ad_show")
      */
     public function show($id, $slug, AdRepository $repo)
     {
