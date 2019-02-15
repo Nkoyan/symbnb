@@ -107,7 +107,7 @@ class UserController extends AbstractController
      */
     public function show($id, $slug, UserRepository $userRepository)
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $userRepository->findOneBy(['id' => $id]);
 
         if (!$user) {

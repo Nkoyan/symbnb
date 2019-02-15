@@ -23,12 +23,14 @@
         "symfony/twig-bundle": "4.2.*",
         "symfony/validator": "4.2.*",
         "symfony/web-link": "4.2.*",
+        "symfony/webpack-encore-bundle": "^1.1",
         "symfony/yaml": "4.2.*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "friendsofphp/php-cs-fixer": "^2.14",
         "fzaninotto/faker": "^1.8",
+        "phpstan/phpstan": "^0.11.2",
         "symfony/debug-pack": "*",
         "symfony/dotenv": "4.2.*",
         "symfony/maker-bundle": "^1.0",
