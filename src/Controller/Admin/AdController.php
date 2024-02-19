@@ -6,7 +6,7 @@ use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
 use App\Service\Pagination;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -56,7 +56,7 @@ class AdController extends AbstractController
     /**
      * @Route("/admin/ads/{id}/delete", name="admin_ad_delete")
      */
-    public function delete(Ad $ad, ObjectManager $manager)
+    public function delete(Ad $ad, EntityManagerInterface $manager)
     {
         if ($ad->getBookings()->count() > 0) {
             $this->addFlash(

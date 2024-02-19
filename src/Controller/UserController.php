@@ -8,7 +8,7 @@ use App\Form\AccountType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class UserController extends AbstractController
     /**
      * @Route("/register", name="user_register")
      */
-    public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -50,7 +50,7 @@ class UserController extends AbstractController
      * @Route("/account/profile", name="user_edit")
      * @IsGranted("ROLE_USER")
      */
-    public function edit(Request $request, ObjectManager $manager)
+    public function edit(Request $request, EntityManagerInterface $manager)
     {
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
@@ -75,7 +75,7 @@ class UserController extends AbstractController
      * @Route("/account/password-update", name="user_update_password")
      * @IsGranted("ROLE_USER")
      */
-    public function updatePassword(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $passwordEncoder)
+    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $passwordEncoder)
     {
         $passwordUpdate = new PasswordUpdate();
         $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);

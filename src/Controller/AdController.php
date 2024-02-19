@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class AdController extends AbstractController
      * @Route("/ads/new", name="ad_create")
      * @IsGranted("ROLE_USER")
      */
-    public function create(Request $request, ObjectManager $manager)
+    public function create(Request $request, EntityManagerInterface $manager)
     {
         $ad = new Ad();
 
@@ -60,7 +60,7 @@ class AdController extends AbstractController
     /**
      * @Route("/ads/{id}/{slug}/edit", name="ad_edit")
      */
-    public function edit(Ad $ad, Request $request, ObjectManager $manager)
+    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
     {
         if (!$ad->isAuthor($this->getUser())) {
             throw $this->createAccessDeniedException('Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier');
@@ -92,7 +92,7 @@ class AdController extends AbstractController
     /**
      * @Route("/ads/{id}/{slug}/delete", name="ad_delete")
      */
-    public function delete(Ad $ad, Request $request, ObjectManager $manager)
+    public function delete(Ad $ad, Request $request, EntityManagerInterface $manager)
     {
         if (!$ad->isAuthor($this->getUser()) || !$this->isCsrfTokenValid('delete', $request->get('token'))) {
             throw $this->createAccessDeniedException();
