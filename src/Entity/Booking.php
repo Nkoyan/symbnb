@@ -7,45 +7,46 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BookingRepository")
+ *
  * @ORM\HasLifecycleCallbacks()
  */
 class Booking
 {
     /**
      * @ORM\Id()
+     *
      * @ORM\GeneratedValue()
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="bookings")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $booker;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Ad", inversedBy="bookings")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $ad;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\Date(message="Vous devez entrer une date valide")
-     * @Assert\GreaterThan(
-     *     "today",
-     *     message="La date d'arrivée doit être ultérieure à la date d'aujourd'hui !",
-     *     groups={"front"}
-     *     )
      */
+    #[Assert\Date(message: 'Vous devez entrer une date valide')]
+    #[Assert\GreaterThan('today', message: "La date d'arrivée doit être ultérieure à la date d'aujourd'hui !", groups: ['front'])]
     private $startDate;
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\Date(message="Vous devez entrer une date valide")
-     * @Assert\GreaterThan(propertyPath="startDate", message="La date de départ doit etre supérieure à la date d'arrivée")
      */
+    #[Assert\Date(message: 'Vous devez entrer une date valide')]
+    #[Assert\GreaterThan(propertyPath: 'startDate', message: "La date de départ doit etre supérieure à la date d'arrivée")]
     private $endDate;
 
     /**
@@ -154,6 +155,7 @@ class Booking
 
     /**
      * @ORM\PrePersist()
+     *
      * @ORM\PreUpdate()
      */
     public function prePersist()
@@ -166,7 +168,7 @@ class Booking
 
     public function getDuration()
     {
-        return ($this->getStartDate()->diff($this->getEndDate()))->days;
+        return $this->getStartDate()->diff($this->getEndDate())->days;
     }
 
     public function isBookableDates()

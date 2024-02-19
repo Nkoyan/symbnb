@@ -7,76 +7,73 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\PasswordHasher\Hasher\SodiumPasswordHasher;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity(
-    fields: ["email"],
+    fields: ['email'],
     message: "Un autre utilisateur s'est déjà inscrit avec cette adresse email, merci de la modifier")]
 #[ORM\HasLifecycleCallbacks()]
 #[ORM\Entity(repositoryClass: "App\Repository\UserRepository")]
 class User implements UserInterface
 {
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
     private ?int $id;
 
-    #[Assert\Email(message: "Veuillez renseigner un email valide !")]
-    #[ORM\Column(type: "string", length: 180, unique: true)]
+    #[Assert\Email(message: 'Veuillez renseigner un email valide !')]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     private ?string $email;
 
-    #[ORM\Column(type: "json")]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-
     #[Assert\NotBlank]
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     #[Assert\Length(
-        min: "4",
+        min: '4',
         max: PasswordHasherInterface::MAX_PASSWORD_LENGTH,
-        minMessage: "Le mot de passe doit faire au moins {{ limit }} caractères",
-        maxMessage: "Le mot de passe ne doit pas dépasser {{ limit }} caractères"
+        minMessage: 'Le mot de passe doit faire au moins {{ limit }} caractères',
+        maxMessage: 'Le mot de passe ne doit pas dépasser {{ limit }} caractères'
     )]
     private string $password;
 
-    #[Assert\EqualTo(propertyPath: "password", message: "Les mots de passe de correspondent pas !")]
+    #[Assert\EqualTo(propertyPath: 'password', message: 'Les mots de passe de correspondent pas !')]
     public $confirmPassword;
 
-    #[Assert\NotBlank(message: "Vous devez renseigner votre prénom")]
-    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank(message: 'Vous devez renseigner votre prénom')]
+    #[ORM\Column(type: 'string', length: 255)]
     private $firstName;
 
-    #[Assert\NotBlank(message: "Vous devez renseigner votre nom de famille")]
-    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank(message: 'Vous devez renseigner votre nom de famille')]
+    #[ORM\Column(type: 'string', length: 255)]
     private $lastName;
 
-    #[Assert\Url(message: "Veuillez donner une URL valide pour votre avatar")]
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\Url(message: 'Veuillez donner une URL valide pour votre avatar')]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $picture;
 
-    #[Assert\Length(min: "10", minMessage: "Votre introduction doit faire au moins {{ limit }} caractères")]
-    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\Length(min: '10', minMessage: 'Votre introduction doit faire au moins {{ limit }} caractères')]
+    #[ORM\Column(type: 'string', length: 255)]
     private $introduction;
 
-    #[Assert\Length(min: "100", minMessage: "Votre description doit faire au moins {{ limit }} caractères")]
-    #[ORM\Column(type: "text")]
+    #[Assert\Length(min: '100', minMessage: 'Votre description doit faire au moins {{ limit }} caractères')]
+    #[ORM\Column(type: 'text')]
     private $description;
 
-    #[ORM\Column(type: "string", length: 255)] private $slug;
-
-    #[ORM\OneToMany(mappedBy: "author", targetEntity: "App\Entity\Ad")]
+    #[ORM\Column(type: 'string', length: 255)] private $slug;
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: "App\Entity\Ad")]
     private $ads;
 
-    #[ORM\OneToMany(mappedBy: "booker", targetEntity: "App\Entity\Booking")]
+    #[ORM\OneToMany(mappedBy: 'booker', targetEntity: "App\Entity\Booking")]
     private $bookings;
 
-    #[ORM\OneToMany(mappedBy: "author", targetEntity: "App\Entity\Comment", orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: "App\Entity\Comment", orphanRemoval: true)]
     private $comments;
 
-    #[ORM\Column(type: "datetime")]
+    #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
     public function __construct()
@@ -274,6 +271,7 @@ class User implements UserInterface
 
     /**
      * @ORM\PrePersist()
+     *
      * @ORM\PreUpdate()
      */
     public function prePersist()

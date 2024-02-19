@@ -81,8 +81,6 @@ class Pagination
 
     /**
      * @throws \Exception
-     *
-     * @return Pagination
      */
     public function paginate(): self
     {

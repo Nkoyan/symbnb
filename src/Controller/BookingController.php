@@ -17,9 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class BookingController extends AbstractController
 {
     /**
-     * @Route("/ads/{id}/{slug}/book", name="booking_new")
      * @IsGranted("ROLE_USER")
      */
+    #[Route(path: '/ads/{id}/{slug}/book', name: 'booking_new')]
     public function new(Ad $ad, Request $request, EntityManagerInterface $manager, BookingRepository $bookingRepository)
     {
         if ($this->getUser() === $ad->getAuthor()) {
@@ -70,9 +70,7 @@ class BookingController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/booking/{id}", name="booking_show")
-     */
+    #[Route(path: '/booking/{id}', name: 'booking_show')]
     public function show(Booking $booking, Request $request, EntityManagerInterface $manager)
     {
         $userComment = $booking->getAd()->getCommentFromAuthor($this->getUser());

@@ -13,9 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdController extends AbstractController
 {
-    /**
-     * @Route("/admin/ads", name="admin_ad_index")
-     */
+    #[Route(path: '/admin/ads', name: 'admin_ad_index')]
     public function index(Request $request, AdRepository $adRepository, Pagination $pagination)
     {
         $pagination = $pagination
@@ -29,9 +27,7 @@ class AdController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/ads/{id}/edit", name="admin_ad_edit")
-     */
+    #[Route(path: '/admin/ads/{id}/edit', name: 'admin_ad_edit')]
     public function edit(Ad $ad, Request $request)
     {
         $form = $this->createForm(AdType::class, $ad);
@@ -53,9 +49,7 @@ class AdController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/ads/{id}/delete", name="admin_ad_delete")
-     */
+    #[Route(path: '/admin/ads/{id}/delete', name: 'admin_ad_delete')]
     public function delete(Ad $ad, EntityManagerInterface $manager)
     {
         if ($ad->getBookings()->count() > 0) {

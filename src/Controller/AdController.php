@@ -13,9 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdController extends AbstractController
 {
-    /**
-     * @Route("/ads", name="ad_index")
-     */
+    #[Route(path: '/ads', name: 'ad_index')]
     public function index(AdRepository $adRepository)
     {
         $ads = $adRepository->findBy([], ['createdAt' => 'DESC']);
@@ -26,9 +24,9 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/ads/new", name="ad_create")
      * @IsGranted("ROLE_USER")
      */
+    #[Route(path: '/ads/new', name: 'ad_create')]
     public function create(Request $request, EntityManagerInterface $manager)
     {
         $ad = new Ad();
@@ -57,9 +55,7 @@ class AdController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/ads/{id}/{slug}/edit", name="ad_edit")
-     */
+    #[Route(path: '/ads/{id}/{slug}/edit', name: 'ad_edit')]
     public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
     {
         if (!$ad->isAuthor($this->getUser())) {
@@ -89,9 +85,7 @@ class AdController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/ads/{id}/{slug}/delete", name="ad_delete")
-     */
+    #[Route(path: '/ads/{id}/{slug}/delete', name: 'ad_delete')]
     public function delete(Ad $ad, Request $request, EntityManagerInterface $manager)
     {
         if (!$ad->isAuthor($this->getUser()) || !$this->isCsrfTokenValid('delete', $request->get('token'))) {
@@ -106,9 +100,7 @@ class AdController extends AbstractController
         return $this->redirectToRoute('user_my_account');
     }
 
-    /**
-     * @Route("/ads/{id<\d+>}/{slug?}", name="ad_show")
-     */
+    #[Route(path: '/ads/{id<\d+>}/{slug?}', name: 'ad_show')]
     public function show($id, $slug, AdRepository $repo)
     {
         $ad = $repo->findOneBy(['id' => $id]);

@@ -12,27 +12,28 @@ class Image
 {
     /**
      * @ORM\Id()
+     *
      * @ORM\GeneratedValue()
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url()
      */
+    #[Assert\Url]
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(
-     *     min="10",
-     *     minMessage="Le titre de l'image doit faire au moins {{ limit }} caractères")
      */
+    #[Assert\Length(min: '10', minMessage: "Le titre de l'image doit faire au moins {{ limit }} caractères")]
     private $caption;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Ad", inversedBy="images")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $ad;

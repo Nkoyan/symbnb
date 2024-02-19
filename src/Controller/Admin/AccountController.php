@@ -8,9 +8,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class AccountController extends AbstractController
 {
-    /**
-     * @Route("/admin/login", name="admin_account_login")
-     */
+    #[Route(path: '/admin/login', name: 'admin_account_login')]
     public function index(AuthenticationUtils $authenticationUtils)
     {
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -22,9 +20,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/logout", name="admin_account_logout")
-     */
+    #[Route(path: '/admin/logout', name: 'admin_account_logout')]
     public function logout()
     {
     }

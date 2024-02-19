@@ -8,9 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    /**
-     * @Route("/admin/users", name="admin_user_index")
-     */
+    #[Route(path: '/admin/users', name: 'admin_user_index')]
     public function index(UserRepository $userRepository)
     {
         $users = $userRepository->findBy([], ['createdAt' => 'DESC']);

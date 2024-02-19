@@ -6,7 +6,6 @@ use App\Entity\Comment;
 use App\Form\AdminCommentType;
 use App\Repository\CommentRepository;
 use App\Service\Pagination;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,9 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController extends AbstractController
 {
-    /**
-     * @Route("/admin/comments", name="admin_comment_index")
-     */
+    #[Route(path: '/admin/comments', name: 'admin_comment_index')]
     public function index(CommentRepository $commentRepository, Request $request, Pagination $pagination)
     {
         $pagination = $pagination
@@ -30,9 +27,7 @@ class CommentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/comments/{id}/edit", name="admin_comment_edit")
-     */
+    #[Route(path: '/admin/comments/{id}/edit', name: 'admin_comment_edit')]
     public function edit(Comment $comment, Request $request, EntityManagerInterface $manager)
     {
         $form = $this->createForm(AdminCommentType::class, $comment);
@@ -53,9 +48,7 @@ class CommentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/comments/{id}/delete", name="admin_comment_delete")
-     */
+    #[Route(path: '/admin/comments/{id}/delete', name: 'admin_comment_delete')]
     public function delete(Comment $comment, EntityManagerInterface $manager)
     {
         $manager->remove($comment);

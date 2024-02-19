@@ -12,30 +12,25 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AdRepository")
+ *
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(
- *     fields={"title"},
- *     message="Une autre annonce possède déjà ce titre, merci de le modifier"
- * )
  */
+#[UniqueEntity(fields: ['title'], message: 'Une autre annonce possède déjà ce titre, merci de le modifier')]
 class Ad
 {
     /**
      * @ORM\Id()
+     *
      * @ORM\GeneratedValue()
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(
-     *     min="10",
-     *     max="255",
-     *     minMessage="Le titre doit faire au moins {{ limit }} caractères",
-     *     maxMessage="Le titre ne doit pas faire plus de {{ limit }} caractères"
-     * )
      */
+    #[Assert\Length(min: '10', max: '255', minMessage: 'Le titre doit faire au moins {{ limit }} caractères', maxMessage: 'Le titre ne doit pas faire plus de {{ limit }} caractères')]
     private $title;
 
     /**
@@ -50,24 +45,20 @@ class Ad
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\Length(
-     *     min="20",
-     *     minMessage="Votre introduction doit faire plus de {{ limit }} caractères")
      */
+    #[Assert\Length(min: '20', minMessage: 'Votre introduction doit faire plus de {{ limit }} caractères')]
     private $introduction;
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\Length(
-     *     min="100",
-     *     minMessage="Votre description ne peut pas faire moins de {{ limit }} caractères")
      */
+    #[Assert\Length(min: '100', minMessage: 'Votre description ne peut pas faire moins de {{ limit }} caractères')]
     private $content;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url()
      */
+    #[Assert\Url]
     private $coverImage;
 
     /**
@@ -87,12 +78,13 @@ class Ad
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="ad", orphanRemoval=true)
-     * @Assert\Valid()
      */
+    #[Assert\Valid]
     private $images;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ads")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
@@ -334,9 +326,9 @@ class Ad
     }
 
     /**
-     * @throws \Exception
-     *
      * @return \DateTime[]
+     *
+     * @throws \Exception
      */
     public function getNotAvailableDays()
     {

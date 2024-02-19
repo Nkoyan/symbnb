@@ -6,13 +6,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ *
  * @ORM\HasLifecycleCallbacks()
  */
 class Comment
 {
     /**
      * @ORM\Id()
+     *
      * @ORM\GeneratedValue()
+     *
      * @ORM\Column(type="integer")
      */
     private $id;
@@ -34,12 +37,14 @@ class Comment
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Ad", inversedBy="comments")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $ad;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
+     *
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;

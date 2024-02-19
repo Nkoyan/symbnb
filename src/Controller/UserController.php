@@ -12,22 +12,20 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
-    /**
-     * @Route("/register", name="user_register")
-     */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $passwordEncoder)
+    #[Route(path: '/register', name: 'user_register')]
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $hash = $passwordEncoder->encodePassword($user, $user->getPassword());
+            $hash = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hash);
 
             $manager->persist($user);
@@ -47,9 +45,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/account/profile", name="user_edit")
      * @IsGranted("ROLE_USER")
      */
+    #[Route(path: '/account/profile', name: 'user_edit')]
     public function edit(Request $request, EntityManagerInterface $manager)
     {
         $user = $this->getUser();
@@ -72,10 +70,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/account/password-update", name="user_update_password")
      * @IsGranted("ROLE_USER")
      */
-    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $passwordEncoder)
+    #[Route(path: '/account/password-update', name: 'user_update_password')]
+    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
     {
         $passwordUpdate = new PasswordUpdate();
         $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
@@ -83,7 +81,7 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
-            $hash = $passwordEncoder->encodePassword($user, $passwordUpdate->password);
+            $hash = $passwordHasher->hashPassword($user, $passwordUpdate->password);
             $user->setPassword($hash);
 
             $manager->persist($user);
@@ -102,9 +100,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/user/{id}/{slug?}", name="user_show")
-     */
+    #[Route(path: '/user/{id}/{slug?}', name: 'user_show')]
     public function show($id, $slug, UserRepository $userRepository)
     {
         /** @var User|null $user */
@@ -124,9 +120,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/account", name="user_my_account")
      * @IsGranted("ROLE_USER")
      */
+    #[Route(path: '/account', name: 'user_my_account')]
     public function myAccount()
     {
         if (!$this->getUser()) {
@@ -139,9 +135,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/account/bookings", name="user_bookings")
      * @IsGranted("ROLE_USER")
      */
+    #[Route(path: '/account/bookings', name: 'user_bookings')]
     public function bookings()
     {
         return $this->render('user/bookings.html.twig');
