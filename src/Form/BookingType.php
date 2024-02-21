@@ -11,11 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BookingType extends ApplicationType
 {
-    private $frenchToDateTimeTransformer;
-
-    public function __construct(FrenchToDateTimeTransformer $frenchToDateTimeTransformer)
+    public function __construct(private FrenchToDateTimeTransformer $frenchToDateTimeTransformer)
     {
-        $this->frenchToDateTimeTransformer = $frenchToDateTimeTransformer;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

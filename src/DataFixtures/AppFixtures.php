@@ -15,12 +15,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AppFixtures extends Fixture
 {
     private $faker;
-    private $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(private UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->faker = Factory::create('fr_FR');
-        $this->passwordEncoder = $passwordEncoder;
     }
 
     public function load(ObjectManager $manager)

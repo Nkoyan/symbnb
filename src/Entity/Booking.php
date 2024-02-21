@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -161,7 +162,7 @@ class Booking
     public function prePersist()
     {
         if (!$this->createdAt) {
-            $this->setCreatedAt(new \DateTime());
+            $this->setCreatedAt(new DateTime());
         }
         $this->setAmount($this->getDuration() * $this->getAd()->getPrice());
     }
@@ -176,10 +177,7 @@ class Booking
         $notAvailableDays = $this->ad->getNotAvailableDays();
         $bookingDays = $this->getDays();
 
-        $formatDay = function ($day) {
-            /* @var \DateTime $day */
-            return $day->format('Y-m-d');
-        };
+        $formatDay = fn(DateTime $day) => $day->format('Y-m-d');
 
         $days = array_map($formatDay, $bookingDays);
         $notAvailable = array_map($formatDay, $notAvailableDays);
@@ -200,7 +198,7 @@ class Booking
         $end = $this->getEndDate()->getTimestamp();
 
         for ($i = $start; $i < $end; $i += 24 * 60 * 60) {
-            $days[] = new \DateTime("@$i");
+            $days[] = new DateTime("@$i");
         }
 
         return $days;

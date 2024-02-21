@@ -13,17 +13,13 @@ class Pagination
     private $currentPage;
     private $data;
     private $totalPages;
-    private $manager;
-    private $twig;
-    private $requestStack;
-    private $templatePath;
 
-    public function __construct(ObjectManager $manager, Environment $twig, RequestStack $requestStack, $templatePath)
-    {
-        $this->manager = $manager;
-        $this->twig = $twig;
-        $this->requestStack = $requestStack;
-        $this->templatePath = $templatePath;
+    public function __construct(
+        private ObjectManager $manager,
+        private Environment $twig,
+        private RequestStack $requestStack,
+        private $templatePath
+    ) {
     }
 
     public function getEntityClass()

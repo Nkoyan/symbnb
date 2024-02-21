@@ -6,11 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class StatsService
 {
-    private $manager;
-
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(private EntityManagerInterface $manager)
     {
-        $this->manager = $manager;
     }
 
     public function getUsersCount()

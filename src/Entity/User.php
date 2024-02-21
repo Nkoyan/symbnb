@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,17 +16,17 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: ['email'],
     message: "Un autre utilisateur s'est déjà inscrit avec cette adresse email, merci de la modifier")]
 #[ORM\HasLifecycleCallbacks()]
-#[ORM\Entity(repositoryClass: "App\Repository\UserRepository")]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface
 {
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     #[ORM\Id]
-    private ?int $id;
+    private ?int $id = null;
 
     #[Assert\Email(message: 'Veuillez renseigner un email valide !')]
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private ?string $email;
+    private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -64,13 +65,13 @@ class User implements UserInterface
     private $description;
 
     #[ORM\Column(type: 'string', length: 255)] private $slug;
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: "App\Entity\Ad")]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Ad::class)]
     private $ads;
 
-    #[ORM\OneToMany(mappedBy: 'booker', targetEntity: "App\Entity\Booking")]
+    #[ORM\OneToMany(mappedBy: 'booker', targetEntity: Booking::class)]
     private $bookings;
 
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: "App\Entity\Comment", orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
     private $comments;
 
     #[ORM\Column(type: 'datetime')]
