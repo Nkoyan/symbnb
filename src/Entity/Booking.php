@@ -2,29 +2,24 @@
 
 namespace App\Entity;
 
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 #[ORM\Entity(repositoryClass: \App\Repository\BookingRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Booking
 {
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class, inversedBy: 'bookings')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'bookings')]
     private $booker;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\Ad::class, inversedBy: 'bookings')]
+    #[ORM\ManyToOne(targetEntity: Ad::class, inversedBy: 'bookings')]
     private $ad;
 
     #[Assert\Date(message: 'Vous devez entrer une date valide')]
@@ -135,13 +130,12 @@ class Booking
         return $this;
     }
 
-    
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function prePersist()
     {
         if (!$this->createdAt) {
-            $this->setCreatedAt(new DateTime());
+            $this->setCreatedAt(new \DateTime());
         }
         $this->setAmount($this->getDuration() * $this->getAd()->getPrice());
     }
@@ -156,7 +150,7 @@ class Booking
         $notAvailableDays = $this->ad->getNotAvailableDays();
         $bookingDays = $this->getDays();
 
-        $formatDay = fn(DateTime $day) => $day->format('Y-m-d');
+        $formatDay = fn (\DateTime $day) => $day->format('Y-m-d');
 
         $days = array_map($formatDay, $bookingDays);
         $notAvailable = array_map($formatDay, $notAvailableDays);
@@ -177,7 +171,7 @@ class Booking
         $end = $this->getEndDate()->getTimestamp();
 
         for ($i = $start; $i < $end; $i += 24 * 60 * 60) {
-            $days[] = new DateTime("@$i");
+            $days[] = new \DateTime("@$i");
         }
 
         return $days;

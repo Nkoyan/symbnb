@@ -4,12 +4,10 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 #[ORM\Entity(repositoryClass: \App\Repository\CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Comment
 {
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -24,14 +22,12 @@ class Comment
     #[ORM\Column(type: 'text')]
     private $content;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\Ad::class, inversedBy: 'comments')]
+    #[ORM\ManyToOne(targetEntity: Ad::class, inversedBy: 'comments')]
     private $ad;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class, inversedBy: 'comments')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'comments')]
     private $author;
 
     public function getId(): ?int

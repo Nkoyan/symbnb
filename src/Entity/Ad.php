@@ -10,13 +10,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[UniqueEntity(fields: ['title'], message: 'Une autre annonce possède déjà ce titre, merci de le modifier')]
 #[ORM\Entity(repositoryClass: \App\Repository\AdRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class Ad
 {
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -54,18 +52,17 @@ class Ad
     private $updatedAt;
 
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: \App\Entity\Image::class, mappedBy: 'ad', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'ad', orphanRemoval: true)]
     private $images;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class, inversedBy: 'ads')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ads')]
     private $author;
 
-    #[ORM\OneToMany(targetEntity: \App\Entity\Booking::class, mappedBy: 'ad')]
+    #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'ad')]
     private $bookings;
 
-    #[ORM\OneToMany(targetEntity: \App\Entity\Comment::class, mappedBy: 'ad', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'ad', orphanRemoval: true)]
     private $comments;
 
     public function __construct()

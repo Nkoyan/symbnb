@@ -270,7 +270,6 @@ class User implements UserInterface
         return $this;
     }
 
-    
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function prePersist()

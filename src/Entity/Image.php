@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: \App\Repository\ImageRepository::class)]
 class Image
 {
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -22,9 +21,8 @@ class Image
     #[ORM\Column(type: 'string', length: 255)]
     private $caption;
 
-    
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \App\Entity\Ad::class, inversedBy: 'images')]
+    #[ORM\ManyToOne(targetEntity: Ad::class, inversedBy: 'images')]
     private $ad;
 
     public function getId(): ?int
