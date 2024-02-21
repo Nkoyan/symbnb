@@ -12,13 +12,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class UserController extends AbstractController
 {
     #[Route(path: '/register', name: 'user_register')]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -48,7 +50,7 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/account/profile', name: 'user_edit')]
-    public function edit(Request $request, EntityManagerInterface $manager)
+    public function edit(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
@@ -73,14 +75,18 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/account/password-update', name: 'user_update_password')]
-    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
+    public function updatePassword(
+        Request $request,
+        EntityManagerInterface $manager,
+        UserPasswordHasherInterface $passwordHasher,
+        #[CurrentUser] User $user,
+    ): Response
     {
         $passwordUpdate = new PasswordUpdate();
         $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
             $hash = $passwordHasher->hashPassword($user, $passwordUpdate->password);
             $user->setPassword($hash);
 
@@ -101,7 +107,7 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/user/{id}/{slug?}', name: 'user_show')]
-    public function show($id, $slug, UserRepository $userRepository)
+    public function show($id, $slug, UserRepository $userRepository): Response
     {
         /** @var User|null $user */
         $user = $userRepository->findOneBy(['id' => $id]);
@@ -123,7 +129,7 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/account', name: 'user_my_account')]
-    public function myAccount()
+    public function myAccount(): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('homepage');
@@ -138,7 +144,7 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/account/bookings', name: 'user_bookings')]
-    public function bookings()
+    public function bookings(): Response
     {
         return $this->render('user/bookings.html.twig');
     }

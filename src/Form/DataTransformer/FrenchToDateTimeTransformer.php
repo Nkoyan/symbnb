@@ -7,22 +7,22 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class FrenchToDateTimeTransformer implements DataTransformerInterface
 {
-    public function transform($date)
+    public function transform($value): mixed
     {
-        if (null === $date) {
+        if (null === $value) {
             return '';
         }
 
-        return $date->format('d/m/Y');
+        return $value->format('d/m/Y');
     }
 
-    public function reverseTransform($frenchDate)
+    public function reverseTransform($value): mixed
     {
-        if (null === $frenchDate) {
+        if (null === $value) {
             throw new TransformationFailedException('Vous devez fournir une date !');
         }
 
-        $date = \DateTime::createFromFormat('d/m/Y', $frenchDate);
+        $date = \DateTime::createFromFormat('d/m/Y', $value);
 
         if (false === $date) {
             throw new TransformationFailedException("Le format de la date n'est pas le bon !");

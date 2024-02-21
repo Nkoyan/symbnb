@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: "Un autre utilisateur s'est déjà inscrit avec cette adresse email, merci de la modifier")]
 #[ORM\HasLifecycleCallbacks()]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: "`user`")]
+#[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Column(type: 'integer')]
@@ -108,9 +108,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @see UserInterface
      */
-    public function getUsername(): string
+    public function getUserIdentifier(): string
     {
         return (string) $this->email;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
     }
 
     /**

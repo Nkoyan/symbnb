@@ -8,13 +8,15 @@ use App\Repository\AdRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdController extends AbstractController
 {
     #[Route(path: '/ads', name: 'ad_index')]
-    public function index(AdRepository $adRepository)
+    public function index(AdRepository $adRepository): Response
     {
         $ads = $adRepository->findBy([], ['createdAt' => 'DESC']);
 
@@ -27,7 +29,7 @@ class AdController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/ads/new', name: 'ad_create')]
-    public function create(Request $request, EntityManagerInterface $manager)
+    public function create(Request $request, EntityManagerInterface $manager): Response
     {
         $ad = new Ad();
 
@@ -56,7 +58,7 @@ class AdController extends AbstractController
     }
 
     #[Route(path: '/ads/{id}/{slug}/edit', name: 'ad_edit')]
-    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
+    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager): Response
     {
         if (!$ad->isAuthor($this->getUser())) {
             throw $this->createAccessDeniedException('Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier');
@@ -86,7 +88,7 @@ class AdController extends AbstractController
     }
 
     #[Route(path: '/ads/{id}/{slug}/delete', name: 'ad_delete')]
-    public function delete(Ad $ad, Request $request, EntityManagerInterface $manager)
+    public function delete(Ad $ad, Request $request, EntityManagerInterface $manager): RedirectResponse
     {
         if (!$ad->isAuthor($this->getUser()) || !$this->isCsrfTokenValid('delete', $request->get('token'))) {
             throw $this->createAccessDeniedException();
@@ -101,7 +103,7 @@ class AdController extends AbstractController
     }
 
     #[Route(path: '/ads/{id<\d+>}/{slug?}', name: 'ad_show')]
-    public function show($id, $slug, AdRepository $repo)
+    public function show($id, $slug, AdRepository $repo): Response
     {
         $ad = $repo->findOneBy(['id' => $id]);
 

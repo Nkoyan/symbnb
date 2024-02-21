@@ -7,11 +7,11 @@ use App\Entity\Booking;
 use App\Entity\Comment;
 use App\Form\BookingType;
 use App\Form\CommentType;
-use App\Repository\BookingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BookingController extends AbstractController
@@ -20,7 +20,7 @@ class BookingController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     #[Route(path: '/ads/{id}/{slug}/book', name: 'booking_new')]
-    public function new(Ad $ad, Request $request, EntityManagerInterface $manager, BookingRepository $bookingRepository)
+    public function new(Ad $ad, Request $request, EntityManagerInterface $manager): Response
     {
         if ($this->getUser() === $ad->getAuthor()) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas réserver votre propre annonce');
@@ -71,7 +71,7 @@ class BookingController extends AbstractController
     }
 
     #[Route(path: '/booking/{id}', name: 'booking_show')]
-    public function show(Booking $booking, Request $request, EntityManagerInterface $manager)
+    public function show(Booking $booking, Request $request, EntityManagerInterface $manager): Response
     {
         $userComment = $booking->getAd()->getCommentFromAuthor($this->getUser());
 

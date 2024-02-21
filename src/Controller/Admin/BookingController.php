@@ -8,13 +8,15 @@ use App\Repository\BookingRepository;
 use App\Service\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BookingController extends AbstractController
 {
     #[Route(path: '/admin/bookings', name: 'admin_booking_index')]
-    public function index(BookingRepository $bookingRepository, Request $request, Pagination $pagination)
+    public function index(BookingRepository $bookingRepository, Request $request, Pagination $pagination): Response
     {
         $pagination = $pagination
             ->setEntityClass(Booking::class)
@@ -28,7 +30,7 @@ class BookingController extends AbstractController
     }
 
     #[Route(path: '/admin/bookings/{id}/edit', name: 'admin_booking_edit')]
-    public function edit(Booking $booking, Request $request, EntityManagerInterface $manager)
+    public function edit(Booking $booking, Request $request, EntityManagerInterface $manager): Response
     {
         $form = $this->createForm(AdminBookingType::class, $booking);
         $form->handleRequest($request);
@@ -52,7 +54,7 @@ class BookingController extends AbstractController
     }
 
     #[Route(path: '/admin/bookings/{id}/delete', name: 'admin_booking_delete')]
-    public function delete(Booking $booking, EntityManagerInterface $manager)
+    public function delete(Booking $booking, EntityManagerInterface $manager): RedirectResponse
     {
         $manager->remove($booking);
         $manager->flush();
