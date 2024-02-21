@@ -10,13 +10,13 @@ use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private $faker;
 
-    public function __construct(private readonly UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
     {
         $this->faker = Factory::create('fr_FR');
     }
@@ -38,7 +38,7 @@ class AppFixtures extends Fixture
         $admin->setFirstName('Yoann')
             ->setLastName('Kergall')
             ->setEmail('yoann.kergall@gmail.com')
-            ->setPassword($this->passwordEncoder->encodePassword($admin, '1111'))
+            ->setPassword($this->passwordHasher->hashPassword($admin, '1111'))
             ->setPicture('https://avatars.io/twitter/yoann')
             ->setIntroduction($this->faker->sentence)
             ->setDescription('<p>'.implode('</p><p>', $this->faker->paragraphs(3)).'</p>')
@@ -67,7 +67,7 @@ class AppFixtures extends Fixture
                 ->setEmail($this->faker->email)
                 ->setIntroduction($this->faker->sentence)
                 ->setDescription('<p>'.implode('</p><p>', $this->faker->paragraphs(3)).'</p>')
-                ->setPassword($this->passwordEncoder->encodePassword($user, '1111'))
+                ->setPassword($this->passwordHasher->hashPassword($user, '1111'))
                 ->setCreatedAt($this->faker->dateTimeBetween('-2 years'))
                 ->setPicture($picture);
 
