@@ -15,9 +15,9 @@ class Pagination
     private $totalPages;
 
     public function __construct(
-        private ObjectManager $manager,
-        private Environment $twig,
-        private RequestStack $requestStack,
+        private readonly ObjectManager $manager,
+        private readonly Environment $twig,
+        private readonly RequestStack $requestStack,
         private $templatePath
     ) {
     }

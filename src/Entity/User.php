@@ -270,11 +270,9 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist()
-     *
-     * @ORM\PreUpdate()
-     */
+    
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function prePersist()
     {
         if (!$this->createdAt) {

@@ -10,93 +10,62 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\AdRepository")
- *
- * @ORM\HasLifecycleCallbacks()
- */
+
 #[UniqueEntity(fields: ['title'], message: 'Une autre annonce possède déjà ce titre, merci de le modifier')]
+#[ORM\Entity(repositoryClass: \App\Repository\AdRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Ad
 {
-    /**
-     * @ORM\Id()
-     *
-     * @ORM\GeneratedValue()
-     *
-     * @ORM\Column(type="integer")
-     */
+    
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     #[Assert\Length(min: '10', max: '255', minMessage: 'Le titre doit faire au moins {{ limit }} caractères', maxMessage: 'Le titre ne doit pas faire plus de {{ limit }} caractères')]
+    #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="decimal", precision=19, scale=4)
-     */
+    #[ORM\Column(type: 'decimal', precision: 19, scale: 4)]
     private $price;
 
-    /**
-     * @ORM\Column(type="text")
-     */
     #[Assert\Length(min: '20', minMessage: 'Votre introduction doit faire plus de {{ limit }} caractères')]
+    #[ORM\Column(type: 'text')]
     private $introduction;
 
-    /**
-     * @ORM\Column(type="text")
-     */
     #[Assert\Length(min: '100', minMessage: 'Votre description ne peut pas faire moins de {{ limit }} caractères')]
+    #[ORM\Column(type: 'text')]
     private $content;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     #[Assert\Url]
+    #[ORM\Column(type: 'string', length: 255)]
     private $coverImage;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $rooms;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $updatedAt;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="ad", orphanRemoval=true)
-     */
     #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: \App\Entity\Image::class, mappedBy: 'ad', orphanRemoval: true)]
     private $images;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="ads")
-     *
-     * @ORM\JoinColumn(nullable=false)
-     */
+    
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class, inversedBy: 'ads')]
     private $author;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Booking", mappedBy="ad")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Booking::class, mappedBy: 'ad')]
     private $bookings;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="ad", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Comment::class, mappedBy: 'ad', orphanRemoval: true)]
     private $comments;
 
     public function __construct()
@@ -219,9 +188,7 @@ class Ad
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist()
-     */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         if (!$this->slug) {
@@ -234,9 +201,7 @@ class Ad
         }
     }
 
-    /**
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         if (!$this->slug) {

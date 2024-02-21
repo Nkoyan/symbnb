@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class StatsService
 {
-    public function __construct(private EntityManagerInterface $manager)
+    public function __construct(private readonly EntityManagerInterface $manager)
     {
     }
 

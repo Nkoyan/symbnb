@@ -16,7 +16,7 @@ class AppFixtures extends Fixture
 {
     private $faker;
 
-    public function __construct(private UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(private readonly UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->faker = Factory::create('fr_FR');
     }

@@ -6,63 +6,44 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\BookingRepository")
- *
- * @ORM\HasLifecycleCallbacks()
- */
+
+#[ORM\Entity(repositoryClass: \App\Repository\BookingRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Booking
 {
-    /**
-     * @ORM\Id()
-     *
-     * @ORM\GeneratedValue()
-     *
-     * @ORM\Column(type="integer")
-     */
+    
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="bookings")
-     *
-     * @ORM\JoinColumn(nullable=false)
-     */
+    
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class, inversedBy: 'bookings')]
     private $booker;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Ad", inversedBy="bookings")
-     *
-     * @ORM\JoinColumn(nullable=false)
-     */
+    
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Ad::class, inversedBy: 'bookings')]
     private $ad;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\Date(message: 'Vous devez entrer une date valide')]
     #[Assert\GreaterThan('today', message: "La date d'arrivée doit être ultérieure à la date d'aujourd'hui !", groups: ['front'])]
+    #[ORM\Column(type: 'date')]
     private $startDate;
 
-    /**
-     * @ORM\Column(type="date")
-     */
     #[Assert\Date(message: 'Vous devez entrer une date valide')]
     #[Assert\GreaterThan(propertyPath: 'startDate', message: "La date de départ doit etre supérieure à la date d'arrivée")]
+    #[ORM\Column(type: 'date')]
     private $endDate;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="decimal", precision=19, scale=4)
-     */
+    #[ORM\Column(type: 'decimal', precision: 19, scale: 4)]
     private $amount;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $comment;
 
     public function getId(): ?int
@@ -154,11 +135,9 @@ class Booking
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist()
-     *
-     * @ORM\PreUpdate()
-     */
+    
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function prePersist()
     {
         if (!$this->createdAt) {

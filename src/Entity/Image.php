@@ -5,37 +5,26 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\ImageRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\ImageRepository::class)]
 class Image
 {
-    /**
-     * @ORM\Id()
-     *
-     * @ORM\GeneratedValue()
-     *
-     * @ORM\Column(type="integer")
-     */
+    
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     #[Assert\Url]
+    #[ORM\Column(type: 'string', length: 255)]
     private $url;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     #[Assert\Length(min: '10', minMessage: "Le titre de l'image doit faire au moins {{ limit }} caractères")]
+    #[ORM\Column(type: 'string', length: 255)]
     private $caption;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Ad", inversedBy="images")
-     *
-     * @ORM\JoinColumn(nullable=false)
-     */
+    
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Ad::class, inversedBy: 'images')]
     private $ad;
 
     public function getId(): ?int

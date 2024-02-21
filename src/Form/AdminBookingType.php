@@ -25,7 +25,7 @@ class AdminBookingType extends AbstractType
             ->add('comment')
             ->add('booker', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => fn(User $user) => $user->getFirstName().' '.mb_strtoupper($user->getLastName()),
+                'choice_label' => fn(User $user) => $user->getFirstName().' '.mb_strtoupper((string) $user->getLastName()),
             ])
             ->add('ad', EntityType::class, [
                 'class' => Ad::class,
