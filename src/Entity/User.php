@@ -113,11 +113,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
-    public function getUsername(): string
-    {
-        return $this->getUserIdentifier();
-    }
-
     /**
      * @see UserInterface
      */
@@ -150,14 +145,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
     /**
