@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PasswordUpdateType extends ApplicationType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('oldPassword', PasswordType::class, $this->getConfiguration('Mot de passe Actuel', 'Mot de passe Actuel ...'))
@@ -17,7 +17,7 @@ class PasswordUpdateType extends ApplicationType
             ->add('confirmPassword', PasswordType::class, $this->getConfiguration('Confirmation du nouveau mot de passe', 'Veuillez confirmer votre mot de passe'));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => PasswordUpdate::class,

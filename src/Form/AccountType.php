@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AccountType extends ApplicationType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('firstName', TextType::class, $this->getConfiguration('Prénom', 'Votre prénom ...'))
@@ -23,7 +23,7 @@ class AccountType extends ApplicationType
             ->add('description', TextareaType::class, $this->getConfiguration('Description détaillée', "C'est le moment de vous présenter en détail ..."));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
