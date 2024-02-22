@@ -12,7 +12,6 @@
         "doctrine/orm": "^2.18",
         "fakerphp/faker": "^1.23",
         "phpdocumentor/reflection-docblock": "^5.3",
-        "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/expression-language": "6.4.*",
@@ -30,7 +29,7 @@
         "symfony/twig-bundle": "6.4.*",
         "symfony/validator": "6.4.*",
         "symfony/web-link": "6.4.*",
-        "symfony/webpack-encore-bundle": "^1.1",
+        "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "6.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
