@@ -86,7 +86,7 @@ class AppFixtures extends Fixture
             $ad = new Ad();
 
             $title = $this->faker->sentence();
-            $coverImage = $this->faker->imageUrl(1000, 350);
+            $coverImage = 'https://picsum.photos/seed/' . mt_rand(1, 9999999) . '/1000/350';
             $introduction = $this->faker->paragraph(2);
             $content = '<p>'.implode('</p><p>', $this->faker->paragraphs(5)).'</p>';
             $createdAt = $this->faker->dateTimeBetween('-1 year');
@@ -115,7 +115,7 @@ class AppFixtures extends Fixture
 
         for ($i = 0; $i < $amount; ++$i) {
             $image = new Image();
-            $image->setUrl($this->faker->imageUrl())
+            $image->setUrl('https://picsum.photos/seed/' . mt_rand(1, 9999999) . '/640/480')
                 ->setCaption($this->faker->sentence())
                 ->setAd($ads[mt_rand(0, \count($ads) - 1)]);
 
